@@ -12,37 +12,37 @@ Coche les cases au fur et à mesure de l’avancement.
 - [x] Ajouter Bootstrap 5 via CDN dans `index.html`
 
 ## 2. Portage de la logique du jeu
-- [ ] Analyser le script `Exo5Venere.sh` et repérer :
-  - [ ] Les variables d’état principales du jeu
-  - [ ] Les fonctions/étapes clés (initialisation, tour de jeu, gestion des entrées, conditions de victoire/défaite)
-- [ ] Créer `js/game.js` et y définir :
-  - [ ] Les structures de données équivalentes (objets, tableaux, constantes)
-  - [ ] Les fonctions principales : `initGame()`, `playTurn()`, `handleInput()`, `checkEndGame()`
-  - [ ] Un point d’entrée `startGame()` qu’on appellera depuis l’UI
+- [x] Analyser le script `Exo5Venere.sh` et repérer :
+  - [x] Les variables d’état principales du jeu
+  - [x] Les fonctions/étapes clés (initialisation, tour de jeu, gestion des entrées, conditions de victoire/défaite)
+- [x] Créer `js/game.js` et y définir :
+  - [x] Les structures de données équivalentes (objets, tableaux, constantes)
+  - [x] Les fonctions principales : `initGame()`, `playTurn()`, `handleInput()`, `checkEndGame()`
+  - [x] Un point d’entrée `startGame()` qu’on appellera depuis l’UI
 
 ## 3. Interface Utilisateur
-- [ ] Maquette rapide (papier/Figma) de l’UI : zones d’affichage, boutons, messages
-- [ ] Dans `index.html` :
-  - [ ] Container Bootstrap (`<div class="container">`)
-  - [ ] En-tête/Titre du jeu
-  - [ ] Div pour le plateau/affichage du jeu
-  - [ ] Div pour les stats (score, vies, etc.)
-  - [ ] Boutons d’action (Nouvelle partie, Recommencer, etc.)
-- [ ] Styliser au besoin dans `css/styles.css`
+- [x] Maquette rapide (papier/Figma) de l’UI : zones d’affichage, boutons, messages
+- [x] Dans `index.html` :
+  - [x] Container Bootstrap (`<div class="container">`)
+  - [x] En-tête/Titre du jeu
+  - [x] Div pour le plateau/affichage du jeu
+  - [x] Div pour les stats (score, vies, etc.)
+  - [x] Boutons d’action (Nouvelle partie, Recommencer, etc.)
+- [x] Styliser au besoin dans `css/styles.css`
 
 ## 4. Gestion des entrées & interactions
-- [ ] Ajouter les écouteurs d’évènements sur les boutons
-- [ ] (Si pertinent) Ajouter la capture du clavier pour les actions rapides
-- [ ] Connecter les entrées à `handleInput()`
+- [x] Ajouter les écouteurs d’évènements sur les boutons
+- [x] (Si pertinent) Ajouter la capture du clavier pour les actions rapides
+- [x] Connecter les entrées à `handleInput()`
 
 ## 5. Boucle de jeu & rendu
-- [ ] Mettre en place une boucle (ou appels successifs) pour actualiser l’état du jeu
-- [ ] Mettre à jour le DOM pour refléter l’état après chaque tour
-- [ ] Gérer les animations/transitions CSS si souhaité
+- [x] Mettre en place une boucle (ou appels successifs) pour actualiser l’état du jeu
+- [x] Mettre à jour le DOM pour refléter l’état après chaque tour
+- [x] Gérer les animations/transitions CSS si souhaité
 
 ## 6. Écrans de fin & redémarrage
-- [ ] Détecter victoire/défaite via `checkEndGame()`
-- [ ] Afficher un écran/overlay de fin avec score et options (Rejouer, Quitter)
+- [x] Détecter victoire/défaite via `checkEndGame()`
+- [x] Afficher un écran/overlay de fin avec score et options (Rejouer, Quitter)
 
 ## 7. Persistance facultative
 - [ ] Sauvegarder les meilleurs scores dans `localStorage`

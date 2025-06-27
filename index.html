@@ -10,17 +10,122 @@
     <link rel="stylesheet" href="css/styles.css">
   </head>
   <body>
-    <main class="container mt-5">
-        <h1 class="text-center">Vénère - Le Jeu</h1>
-        <p class="lead text-center">Le célèbre jeu d'aventure textuel, maintenant dans votre navigateur !</p>
-        
-        <div id="game-container" class="p-3 border rounded bg-light mt-4">
-            <div id="game-output"></div>
-            <div id="stats-display" class="mt-3"></div>
+    <main class="container mt-4">
+        <header class="text-center mb-4">
+            <h1>Vénère - Le Jeu</h1>
+            <p class="lead">Le célèbre jeu d'aventure textuel, maintenant dans votre navigateur !</p>
+            <div id="god-mode-indicator" class="text-warning fw-bold" style="display: none;">G O D M O D E</div>
+        </header>
+
+        <!-- Écran d'accueil -->
+        <div id="home-screen" class="screen active">
+            <div class="card text-center shadow-sm">
+                <div class="card-header">Menu Principal</div>
+                <div class="card-body">
+                    <button id="new-game-btn" class="btn btn-primary btn-lg m-2">Nouvelle Partie</button>
+                    <button id="continue-btn" class="btn btn-success btn-lg m-2">Continuer l'Aventure</button>
+                    <button id="settings-btn" class="btn btn-secondary m-2">Paramètres</button>
+                </div>
+            </div>
         </div>
 
-        <div id="input-area" class="mt-3">
-            <!-- Les boutons et champs de saisie seront ajoutés ici -->
+        <!-- Écran de sélection des niveaux Aventure -->
+        <div id="adventure-screen" class="screen">
+            <div class="card text-center shadow-sm">
+                <div class="card-header">Mode Aventure</div>
+                <div id="adventure-level-select" class="card-body">
+                    <!-- Les niveaux seront générés ici par JS -->
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-outline-secondary back-to-home-btn">Retour à l'accueil</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran de sélection de difficulté Mode Libre -->
+        <div id="free-mode-screen" class="screen">
+            <div class="card text-center shadow-sm">
+                <div class="card-header">Mode Libre - Choix de la difficulté</div>
+                <div id="free-mode-difficulty-select" class="card-body">
+                    <!-- Les boutons de difficulté seront générés ici par JS -->
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-outline-secondary back-to-home-btn">Retour à l'accueil</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran de sélection du mode -->
+        <div id="mode-select-screen" class="screen">
+            <div class="card text-center shadow-sm">
+                <div class="card-header">Choix du Mode</div>
+                <div class="card-body">
+                    <button id="free-mode-btn" class="btn btn-info btn-lg m-2">Mode Libre</button>
+                    <button id="adventure-mode-btn" class="btn btn-warning btn-lg m-2">Mode Aventure</button>
+                </div>
+                <div class="card-footer">
+                     <button class="btn btn-sm btn-outline-secondary back-to-home-btn">Retour</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran de jeu principal -->
+        <div id="game-screen" class="screen">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 id="game-title" class="card-title mb-0"></h5>
+                </div>
+                <div class="card-body">
+                    <p id="game-message" class="lead"></p>
+                    <div class="input-group mb-3">
+                        <input type="number" id="guess-input" class="form-control" placeholder="Votre proposition...">
+                        <button id="guess-btn" class="btn btn-primary">Valider</button>
+                    </div>
+                    <hr>
+                    <h6>Historique des tentatives (<span id="attempts-count">0</span>) :</h6>
+                    <ul id="previous-guesses-list" class="list-group">
+                        <!-- Les propositions s'afficheront ici -->
+                    </ul>
+                </div>
+                <div class="card-footer text-end">
+                    <button class="btn btn-sm btn-outline-danger back-to-home-btn">Quitter & Retour à l'accueil</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran des paramètres -->
+        <div id="settings-screen" class="screen">
+             <div class="card text-center shadow-sm">
+                <div class="card-header">Paramètres</div>
+                <div class="card-body">
+                    <p>Langue :</p>
+                    <button class="btn btn-outline-primary lang-btn" data-lang="fr">Français</button>
+                    <button class="btn btn-outline-primary lang-btn" data-lang="en">English</button>
+                    <button class="btn btn-outline-primary lang-btn" data-lang="es">Español</button>
+                    <hr>
+                    <div class="form-check form-switch d-inline-block">
+                        <input class="form-check-input" type="checkbox" role="switch" id="help-switch">
+                        <label class="form-check-label" for="help-switch">Activer l'aide (réduit les bornes)</label>
+                    </div>
+                </div>
+                <div class="card-footer">
+                     <button class="btn btn-sm btn-outline-secondary back-to-home-btn">Retour</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran de fin de partie -->
+        <div id="end-game-screen" class="screen">
+            <div class="card text-center shadow-sm">
+                <div class="card-header">
+                    <h5 id="end-game-title" class="card-title mb-0"></h5>
+                </div>
+                <div class="card-body">
+                    <p id="end-game-message" class="lead"></p>
+                    <button id="play-again-btn" class="btn btn-primary m-2">Rejouer</button>
+                    <button class="btn btn-secondary m-2 back-to-home-btn">Retour au menu</button>
+                </div>
+            </div>
         </div>
 
     </main>

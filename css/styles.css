@@ -3,3 +3,30 @@
 body {
     background-color: #f8f9fa;
 }
+
+.screen {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+}
+
+.screen.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Animation pour les nouveaux éléments dans la liste */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.new-guess-animation {
+    animation: fadeInDown 0.5s ease-out;
+}
