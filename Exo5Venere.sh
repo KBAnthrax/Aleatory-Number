@@ -1,11 +1,19 @@
- # --- Couleurs ---
-C_DEFAULT='\e[0m'
-C_RED='\e[31m'
-C_GREEN='\e[32m'
-C_YELLOW='\e[33m'
-C_BLUE='\033[94m'
-C_GRAY='\033[90m'
-C_CYAN='\e[36m'
+ # --- Global Variables ---
+# Couleurs
+C_DEFAULT="\033[0m"
+C_BLACK="\033[30m"
+C_RED="\033[31m"
+C_GREEN="\033[32m"
+C_YELLOW="\033[33m"
+C_BLUE="\033[34m"
+C_MAGENTA="\033[35m"
+C_CYAN="\033[36m"
+C_WHITE="\033[37m"
+
+# God Mode
+GOD_MODE=0
+AIDE_ACTIVE=0
+LANGUE="fr"
 
 # --- Caractères de boîte ---
 BOX_V="║"
@@ -18,10 +26,9 @@ BOX_ML="╠"
 BOX_MR="╣"
 
 # --- Constantes de mise en page ---
-WIDTH=40
+WIDTH=60
 
-# --- God Mode ---
-GOD_MODE=0 # 0 = désactivé, 1 = activé
+
 
 # --- Réinitialisation automatique à la sortie ---
 # Si le script est quitté avec le God Mode activé, la progression est réinitialisée.
@@ -125,14 +132,13 @@ welcome_screen() {
   print_separator_line "═" "$BOX_TL" "$BOX_TR"
   print_centered_text "Bienvenue dans..."
   print_centered_text "ALEATORY NUMBER"
+  print_separator_line
+  print_left_aligned_text " Touche [${C_GREEN}Entrée${C_DEFAULT}] → START"
+  print_left_aligned_text " Touche [${C_RED}e${C_DEFAULT}]      → EXIT"
   print_separator_line "═" "$BOX_BL" "$BOX_BR"
-  echo ""
-  echo -e "Touche [${C_GREEN}Entrée${C_DEFAULT}] → START"
-  echo -e "Touche [${C_RED}e${C_DEFAULT}]      → EXIT"
   echo ""
 
   read key
-  echo ""
 
   if [[ "$key" == "gdmd" ]]; then
       toggle_god_mode
@@ -152,7 +158,148 @@ welcome_screen() {
   esac
 }
 
+choisir_langue() {
+    local error_message=""
+    while true; do
+        clear
+        display_god_mode_indicator
+        print_separator_line "═" "$BOX_TL" "$BOX_TR"
+        print_centered_text "CHOIX DE LA LANGUE"
+        print_separator_line
+
+        local lang_fr="1 → Français (FR)"
+        local lang_en="2 → English (EN)"
+        local lang_es="3 → Español (ES)"
+
+        if [ "$LANGUE" == "fr" ]; then
+            lang_fr="${C_GREEN}${lang_fr} (Sélectionnée)${C_DEFAULT}"
+        elif [ "$LANGUE" == "en" ]; then
+            lang_en="${C_GREEN}${lang_en} (Selected)${C_DEFAULT}"
+        elif [ "$LANGUE" == "es" ]; then
+            lang_es="${C_GREEN}${lang_es} (Seleccionado)${C_DEFAULT}"
+        fi
+
+        print_left_aligned_text "$lang_fr"
+        print_left_aligned_text "$lang_en"
+        print_left_aligned_text "$lang_es"
+        print_separator_line
+        print_left_aligned_text "${C_RED}r → Retour${C_DEFAULT}"
+        print_separator_line
+
+        if [ -n "$error_message" ]; then
+            print_centered_text "$error_message"
+            error_message=""
+        else
+            print_centered_text "Faites votre choix."
+        fi
+        
+        print_separator_line "═" "$BOX_BL" "$BOX_BR"
+        read -p "Votre choix : " choix
+
+        case "$choix" in
+            1)
+                LANGUE="fr"
+                clear
+                print_separator_line "═" "$BOX_TL" "$BOX_TR"
+                print_centered_text "${C_GREEN}Langue définie sur Français${C_DEFAULT}"
+                print_separator_line "═" "$BOX_BL" "$BOX_BR"
+                sleep 2
+                return
+                ;;
+            2)
+                LANGUE="en"
+                clear
+                print_separator_line "═" "$BOX_TL" "$BOX_TR"
+                print_centered_text "${C_GREEN}Language set to English${C_DEFAULT}"
+                print_separator_line "═" "$BOX_BL" "$BOX_BR"
+                sleep 2
+                return
+                ;;
+            3)
+                LANGUE="es"
+                clear
+                print_separator_line "═" "$BOX_TL" "$BOX_TR"
+                print_centered_text "${C_GREEN}Idioma establecido en Español${C_DEFAULT}"
+                print_separator_line "═" "$BOX_BL" "$BOX_BR"
+                sleep 2
+                return
+                ;;
+            r|R)
+                return
+                ;;
+            *)
+                error_message="${C_RED}Choix invalide.${C_DEFAULT}"
+                ;;
+        esac
+    done
+}
+
 # --- Home Screen ---
+# Affiche le menu des paramètres
+afficher_parametres() {
+    local error_message=""
+    while true; do
+        clear
+        display_god_mode_indicator
+        print_separator_line "═" "$BOX_TL" "$BOX_TR"
+        print_centered_text "PARAMÈTRES"
+        print_separator_line
+
+        local aide_status
+        if [ "$AIDE_ACTIVE" -eq 1 ]; then
+            aide_status="${C_GREEN}(Activée)${C_DEFAULT}"
+        else
+            aide_status="${C_RED}(Désactivée)${C_DEFAULT}"
+        fi
+
+        print_left_aligned_text "${C_YELLOW}1 → Activer/Désactiver l'aide${C_DEFAULT} ${aide_status}"
+        print_left_aligned_text "${C_GREEN}2 → Changer la langue${C_DEFAULT}"
+        print_left_aligned_text "${C_RED}3 → Retour${C_DEFAULT}"
+        print_separator_line
+        
+        if [ -n "$error_message" ]; then
+            print_centered_text "$error_message"
+            if [ "$GOD_MODE" -eq 1 ]; then
+                print_centered_text "${C_YELLOW}Ψ Oracle Ψ : Le nombre est ${nombre}${C_DEFAULT}"
+            fi
+            print_separator_line "═" "$BOX_BL" "$BOX_BR"
+            sleep 1
+            error_message=""
+            continue
+        fi
+
+        print_centered_text "Faites votre choix."
+        print_separator_line "═" "$BOX_BL" "$BOX_BR"
+        read -p "Votre choix : " choix
+
+        case "$choix" in
+            1)
+                if [ "$AIDE_ACTIVE" -eq 0 ]; then
+                    AIDE_ACTIVE=1
+                    message="Aide ${C_GREEN}ACTIVÉE${C_DEFAULT}"
+                else
+                    AIDE_ACTIVE=0
+                    message="Aide ${C_RED}DÉSACTIVÉE${C_DEFAULT}"
+                fi
+                clear
+                print_separator_line "═" "$BOX_TL" "$BOX_TR"
+                print_centered_text "$message"
+                print_separator_line "═" "$BOX_BL" "$BOX_BR"
+                sleep 2
+                ;;
+            2)
+                choisir_langue
+                ;;
+            3)
+                return
+                ;;
+            *)
+                error_message="${C_RED}Choix invalide.${C_DEFAULT}"
+                ;;
+        esac
+    done
+}
+
 home_screen() {
   local error_message=""
   while true; do
@@ -164,12 +311,16 @@ home_screen() {
     print_left_aligned_text "${C_GREEN}1 → Nouvelle Partie${C_DEFAULT}"
     print_left_aligned_text "${C_YELLOW}2 → Continuer${C_DEFAULT}"
     print_left_aligned_text "${C_RED}3 → Quitter${C_DEFAULT}"
+    print_left_aligned_text "${C_CYAN}4 → Paramètres${C_DEFAULT}"
     print_separator_line
     if [ -n "$error_message" ]; then
         print_centered_text "$error_message"
-    else
-        print_centered_text "Faites votre choix."
+        print_separator_line "═" "$BOX_BL" "$BOX_BR"
+        sleep 1
+        error_message=""
+        continue
     fi
+    print_centered_text "Faites votre choix."
     print_separator_line "═" "$BOX_BL" "$BOX_BR"
 
     read -p "Votre choix : " choix
@@ -194,6 +345,10 @@ home_screen() {
             print_centered_text "${C_GREEN}o: Oui${C_DEFAULT}  |  ${C_RED}n: Non${C_DEFAULT}"
             if [ -n "$confirm_error" ]; then
                 print_centered_text "$confirm_error"
+                print_separator_line "═" "$BOX_BL" "$BOX_BR"
+                sleep 1
+                confirm_error=""
+                continue
             fi
             print_separator_line "═" "$BOX_BL" "$BOX_BR"
 
@@ -229,8 +384,11 @@ home_screen() {
         echo "Merci d'avoir joué ! À bientôt !"
         exit 0
         ;;
+      4) # Paramètres
+        afficher_parametres
+        ;;
       *)
-        error_message="${C_RED}Choix invalide. Merci de saisir 1, 2 ou 3.${C_DEFAULT}"
+        error_message="${C_RED}Choix invalide. Merci de saisir 1, 2, 3 ou 4.${C_DEFAULT}"
         ;;
     esac
   done
@@ -255,9 +413,12 @@ menu() {
     print_separator_line
     if [ -n "$error_message" ]; then
         print_centered_text "$error_message"
-    else
-        print_centered_text "Faites votre choix."
+        print_separator_line "═" "$BOX_BL" "$BOX_BR"
+        sleep 1
+        error_message=""
+        continue
     fi
+    print_centered_text "Faites votre choix."
     print_separator_line "═" "$BOX_BL" "$BOX_BR"
 
     read -p "Votre choix : " mode
@@ -303,9 +464,12 @@ mode_libre() {
         print_separator_line
         if [ -n "$error_message" ]; then
             print_centered_text "$error_message"
-        else
-            print_centered_text "Entrez un chiffre de 1 à ${#difficultes_noms[@]}."
+            print_separator_line "═" "$BOX_BL" "$BOX_BR"
+            sleep 1
+            error_message=""
+            continue
         fi
+        print_centered_text "Entrez un chiffre de 1 à ${#difficultes_noms[@]}."
         print_separator_line "═" "$BOX_BL" "$BOX_BR"
 
         read -p "Votre choix : " choix_diff
@@ -318,6 +482,8 @@ mode_libre() {
 
     local max=${difficultes_max[$((choix_diff - 1))]}
     local nombre=$(( (RANDOM % max) + 1 ))
+    local borne_min=1
+    local borne_max=$max
 
     # Calcul du nombre d'essais max via la dichotomie (avec plafond) + 2
     local essais_necessaires=$(awk -v n="$max" 'BEGIN{l=log(n)/log(2); print (l == int(l)) ? l : int(l)+1}')
@@ -326,31 +492,47 @@ mode_libre() {
     local compteur=0
     local propositions=()
     local reponse
-    message="Faites votre proposition."
+    local message="Faites votre proposition."
+    error_message="" # On réutilise la variable, mais on la vide pour la boucle de jeu.
 
-    local game_won=false
     while [ "$compteur" -lt "$essais_max" ]; do
         clear
         display_god_mode_indicator
         print_separator_line "═" "$BOX_TL" "$BOX_TR"
         print_centered_text "${C_YELLOW}MODE LIBRE${C_DEFAULT}"
         print_separator_line
-        local essais_restants=$(( essais_max - compteur ))
+        local essais_restants=$((essais_max - compteur))
         print_centered_text "Il vous reste ${C_YELLOW}$essais_restants/${essais_max}${C_DEFAULT} essais."
-        print_centered_text "Le nombre est entre ${C_WHITE}1${C_DEFAULT} et ${C_WHITE}$max${C_DEFAULT}."
+        if [ "$borne_min" -eq "$borne_max" ]; then
+            print_centered_text "Le nombre est ${C_YELLOW}$borne_min${C_DEFAULT}."
+        else
+            print_centered_text "Le nombre est entre ${C_YELLOW}$borne_min${C_DEFAULT} et ${C_YELLOW}$borne_max${C_DEFAULT}."
+        fi
         if [ ${#propositions[@]} -gt 0 ]; then
-            local unique_propositions=$(printf "%s\n" "${propositions[@]}" | sort -un | tr '\n' ' ')
-            print_centered_text "Vos essais: ${C_CYAN}${unique_propositions}${C_DEFAULT}"
+            local unique_propositions="${propositions[*]}"
+            print_centered_text "Vos essais: ${C_WHITE}${unique_propositions}${C_DEFAULT}"
         else
             print_centered_text " "
         fi
         print_separator_line
+
+        if [ -n "$error_message" ]; then
+            print_centered_text "$error_message"
+            if [ "$GOD_MODE" -eq 1 ]; then
+                print_centered_text "${C_YELLOW}Ψ Oracle Ψ : Le nombre est ${nombre}${C_DEFAULT}"
+            fi
+            print_separator_line "═" "$BOX_BL" "$BOX_BR"
+            sleep 1
+            error_message=""
+            continue
+        fi
+
         print_centered_text "$message"
         if [ "$GOD_MODE" -eq 1 ]; then
             print_centered_text "${C_YELLOW}Ψ Oracle Ψ : Le nombre est ${nombre}${C_DEFAULT}"
         fi
         print_separator_line "═" "$BOX_BL" "$BOX_BR"
-
+        
         read -p "Votre proposition (m=menu, h=home) : " reponse
 
         if [[ "$reponse" == "gdmd" ]]; then
@@ -360,8 +542,8 @@ mode_libre() {
 
         if [[ "$reponse" =~ ^[mMhH]$ ]]; then
             case "$reponse" in m|M) menu; return ;; h|H) home_screen; return ;; esac
-        elif ! [[ "$reponse" =~ ^[0-9]+$ ]] || [ "$reponse" -lt 1 ] || [ "$reponse" -gt "$max" ]; then
-            message="${C_RED}Entrée invalide. Un nombre entre 1 et $max est attendu.${C_DEFAULT}"
+        elif ! [[ "$reponse" =~ ^[0-9]+$ ]] || [ "$reponse" -lt "$borne_min" ] || [ "$reponse" -gt "$borne_max" ]; then
+            error_message="${C_RED}Entrée invalide. Un nombre entre $borne_min et $borne_max est attendu.${C_DEFAULT}"
             continue
         fi
 
@@ -369,56 +551,62 @@ mode_libre() {
         compteur=$((compteur + 1))
 
         if [ "$reponse" -eq "$nombre" ]; then
-            game_won=true
-            break
+            message="${C_GREEN}🎉 GAGNÉ ! Vous avez trouvé ${nombre} en ${compteur} essais. 🎉${C_DEFAULT}"
+            break # Sortir de la boucle de jeu
         elif [ "$reponse" -lt "$nombre" ]; then
             message="Le nombre mystère est ${C_YELLOW}PLUS GRAND${C_DEFAULT} !"
+            if [ "$AIDE_ACTIVE" -eq 1 ]; then
+                borne_min=$((reponse + 1))
+            fi
         else
             message="Le nombre mystère est ${C_YELLOW}PLUS PETIT${C_DEFAULT} !"
+            if [ "$AIDE_ACTIVE" -eq 1 ]; then
+                borne_max=$((reponse - 1))
+            fi
         fi
     done
 
-    if [ "$game_won" = true ]; then
-        clear
-        display_god_mode_indicator
-        print_separator_line "═" "$BOX_TL" "$BOX_TR"
-        print_centered_text "${C_GREEN}🎉 GAGNÉ ! 🎉${C_DEFAULT}"
-        print_separator_line
-        print_centered_text "Vous avez trouvé ${C_YELLOW}$nombre${C_DEFAULT} en ${C_YELLOW}$compteur${C_DEFAULT} essais !"
-        print_separator_line "═" "$BOX_BL" "$BOX_BR"
-    else
-        clear
-        display_god_mode_indicator
-        print_separator_line "═" "$BOX_TL" "$BOX_TR"
-        print_centered_text "${C_RED}PERDU${C_DEFAULT}"
-        print_separator_line
-        print_centered_text "Vous n'avez pas trouvé le nombre à temps."
-        print_centered_text "La réponse était ${C_YELLOW}$nombre${C_DEFAULT}."
-        print_separator_line "═" "$BOX_BL" "$BOX_BR"
+    # Si le joueur n'a pas trouvé le nombre à temps, mettre à jour le message
+    if [ "$compteur" -ge "$essais_max" ] && [ "$reponse" -ne "$nombre" ]; then
+        message="${C_RED}PERDU. Le nombre était ${nombre}.${C_DEFAULT}"
     fi
 
-    sleep 2
-    local choice_message=""
+    # Boucle de fin de partie pour rejouer ou quitter
+    local choix_fin
+    local error_message_fin=""
     while true; do
         clear
         display_god_mode_indicator
         print_separator_line "═" "$BOX_TL" "$BOX_TR"
-        print_centered_text "${C_GREEN}r: Rejouer${C_DEFAULT} | ${C_YELLOW}m: Menu${C_DEFAULT} | ${C_BLUE}h: Home${C_DEFAULT}"
-        if [ -n "$choice_message" ]; then
-            print_centered_text "$choice_message"
+        print_centered_text "FIN DE LA PARTIE"
+        print_separator_line
+        print_centered_text "$message"
+        print_separator_line
+
+        if [ -n "$error_message_fin" ]; then
+            print_centered_text "$error_message_fin"
+        else
+            print_centered_text "${C_GREEN}r: Rejouer${C_DEFAULT} | ${C_YELLOW}m: Menu${C_DEFAULT} | ${C_BLUE}h: Home${C_DEFAULT}"
         fi
+        
         print_separator_line "═" "$BOX_BL" "$BOX_BR"
-        read -p "Ton choix : " choix
-        if [[ "$choix" == "gdmd" ]]; then
+        read -p "Votre choix : " choix_fin
+
+        if [ -n "$error_message_fin" ]; then
+            sleep 1
+            error_message_fin=""
+        fi
+
+        if [[ "$choix_fin" == "gdmd" ]]; then
             toggle_god_mode
-            choice_message=""
             continue
         fi
-        case "$choix" in
-            r|R) mode_libre; return ;;
-            m|M) menu; return ;;
-            h|H) home_screen; return ;;
-            *) choice_message="${C_RED}Choix invalide.${C_DEFAULT}" ;;
+
+        case "$choix_fin" in
+            r|R) mode_libre; return ;; # Relance une nouvelle partie libre
+            m|M) menu; return ;;       # Retourne au menu de sélection des modes
+            h|H) home_screen; return ;; # Retourne à l'écran d'accueil
+            *) error_message_fin="${C_RED}Choix invalide.${C_DEFAULT}" ;;
         esac
     done
 }
@@ -426,13 +614,13 @@ mode_libre() {
 # --- Fonction jouer_niveau (Aventure) ---
 jouer_niveau() {
     local niveau=$1 max=$2 _essais_max_old=$3 _moyenne_old=$4 round_num=$5 total_rounds=$6
+    local borne_min=1
+    local borne_max=$max
 
     # Nouvelle logique de calcul des essais
-    # Calcul du nombre d'essais optimal par dichotomie (log base 2 de max)
     local essais_dichotomie
     essais_dichotomie=$(echo "a=l($max)/l(2); scale=0; if(a%1>0) a/1+1 else a/1" | bc -l 2>/dev/null)
-    if ! [[ "$essais_dichotomie" =~ ^[0-9]+$ ]] || [ "$essais_dichotomie" -eq 0 ]; then # Fallback si bc n'est pas installé ou échoue
-        # Calcul manuel approximatif si bc n'est pas disponible
+    if ! [[ "$essais_dichotomie" =~ ^[0-9]+$ ]] || [ "$essais_dichotomie" -eq 0 ]; then # Fallback
         local val=1
         local count=0
         while [ "$val" -lt "$max" ]; do
@@ -440,17 +628,16 @@ jouer_niveau() {
             count=$((count + 1))
         done
         essais_dichotomie=$count
-        if [ "$essais_dichotomie" -eq 0 ]; then essais_dichotomie=1; fi # Au moins 1 essai
+        if [ "$essais_dichotomie" -eq 0 ]; then essais_dichotomie=1; fi
     fi
 
-    # Le nombre maximum d'essais autorisés est l'optimal + 2
-    local essais_max=$(( essais_dichotomie + 2 ))
-
+    local essais_max=$((essais_dichotomie + 2))
     local nombre=$(( (RANDOM % max) + 1 ))
     local compteur=0
     local propositions=()
     local reponse
     local message="Faites votre proposition."
+    local error_message=""
 
     while [ "$compteur" -lt "$essais_max" ]; do
         clear
@@ -458,16 +645,32 @@ jouer_niveau() {
         print_separator_line "═" "$BOX_TL" "$BOX_TR"
         print_centered_text "${C_YELLOW}NIVEAU $niveau ${C_CYAN}- ROUND $round_num/$total_rounds${C_DEFAULT}"
         print_separator_line
-        local essais_restants=$(( essais_max - compteur ))
-        print_centered_text "Il vous reste ${C_YELLOW}$essais_restants/${essais_max}${C_DEFAULT} essais."
-        print_centered_text "Le nombre est entre ${C_WHITE}1${C_DEFAULT} et ${C_WHITE}$max${C_DEFAULT}."
+        local essais_restants=$((essais_max - compteur))
+        print_centered_text "Il vous reste ${C_WHITE}$essais_restants/${essais_max}${C_DEFAULT} essais."
+        if [ "$borne_min" -eq "$borne_max" ]; then
+            print_centered_text "Le nombre est ${C_YELLOW}$borne_min${C_DEFAULT}."
+        else
+            print_centered_text "Le nombre est entre ${C_YELLOW}$borne_min${C_DEFAULT} et ${C_YELLOW}$borne_max${C_DEFAULT}."
+        fi
         if [ ${#propositions[@]} -gt 0 ]; then
-            local unique_propositions=$(printf "%s\n" "${propositions[@]}" | sort -un | tr '\n' ' ')
+            local unique_propositions="${propositions[*]}"
             print_centered_text "Vos essais: ${C_CYAN}${unique_propositions}${C_DEFAULT}"
         else
             print_centered_text " "
         fi
         print_separator_line
+
+        if [ -n "$error_message" ]; then
+            print_centered_text "$error_message"
+            if [ "$GOD_MODE" -eq 1 ]; then
+                print_centered_text "${C_YELLOW}Ψ Oracle Ψ : Le nombre est ${nombre}${C_DEFAULT}"
+            fi
+            print_separator_line "═" "$BOX_BL" "$BOX_BR"
+            sleep 1
+            error_message=""
+            continue
+        fi
+
         print_centered_text "$message"
         if [ "$GOD_MODE" -eq 1 ]; then
             print_centered_text "${C_YELLOW}Ψ Oracle Ψ : Le nombre est ${nombre}${C_DEFAULT}"
@@ -483,8 +686,8 @@ jouer_niveau() {
 
         if [[ "$reponse" =~ ^[mMhH]$ ]]; then
             case "$reponse" in m|M) menu; exit 2 ;; h|H) home_screen; exit 2 ;; esac
-        elif ! [[ "$reponse" =~ ^[0-9]+$ ]] || [ "$reponse" -lt 1 ] || [ "$reponse" -gt "$max" ]; then
-            message="${C_RED}Entrée invalide. Un nombre entre 1 et $max est attendu.${C_DEFAULT}"
+        elif ! [[ "$reponse" =~ ^[0-9]+$ ]] || [ "$reponse" -lt "$borne_min" ] || [ "$reponse" -gt "$borne_max" ]; then
+            error_message="${C_RED}Entrée invalide. Un nombre entre $borne_min et $borne_max est attendu.${C_DEFAULT}"
             continue
         fi
 
@@ -492,20 +695,14 @@ jouer_niveau() {
         compteur=$((compteur + 1))
 
         if [ "$reponse" -eq "$nombre" ]; then
-            # Nouvelle logique de scoring basée sur la dichotomie
             local k=0
             if [ "$essais_dichotomie" -gt 1 ]; then
-                # Facteur réduit pour une pénalité plus douce
                 k=$(( 100 / (essais_dichotomie - 1) ))
-            else # Évite la division par zéro si essais_dichotomie est 1 (ex: max=2)
+            else
                 k=100
             fi
-            
             score=$(( 333 + k * (essais_dichotomie - compteur) ))
-            
-            if [ $score -lt 0 ]; then # S'assure que le score n'est pas négatif
-                score=0
-            fi
+            if [ $score -lt 0 ]; then score=0; fi
 
             clear
             display_god_mode_indicator
@@ -520,8 +717,14 @@ jouer_niveau() {
             return 0
         elif [ "$reponse" -lt "$nombre" ]; then
             message="Le nombre mystère est ${C_YELLOW}PLUS GRAND${C_DEFAULT} !"
+            if [ "$AIDE_ACTIVE" -eq 1 ]; then
+                borne_min=$((reponse + 1))
+            fi
         else
             message="Le nombre mystère est ${C_YELLOW}PLUS PETIT${C_DEFAULT} !"
+            if [ "$AIDE_ACTIVE" -eq 1 ]; then
+                borne_max=$((reponse - 1))
+            fi
         fi
     done
 
@@ -585,9 +788,13 @@ mode_aventure() {
         print_separator_line
         if [ -n "$error_message" ]; then
             print_centered_text "$error_message"
-        else
-            print_centered_text "Choisissez un niveau jouable."
+            print_separator_line "═" "$BOX_BL" "$BOX_BR"
+            sleep 1
+            error_message=""
+            continue
         fi
+
+        print_centered_text "Choisissez un niveau jouable."
         print_centered_text "${C_YELLOW}m: Menu${C_DEFAULT} | ${C_BLUE}h: Home${C_DEFAULT}"
         print_separator_line "═" "$BOX_BL" "$BOX_BR"
         
@@ -698,10 +905,15 @@ mode_aventure() {
         if [ -n "$success_message" ]; then print_centered_text "$success_message"; fi
         
         print_separator_line
-        print_centered_text "${C_GREEN}r: Rejouer / Autre niveau${C_DEFAULT} | ${C_YELLOW}m: Menu${C_DEFAULT} | ${C_BLUE}h: Home${C_DEFAULT}"
         if [ -n "$error_message" ]; then
             print_centered_text "$error_message"
+            print_separator_line "═" "$BOX_BL" "$BOX_BR"
+            sleep 1
+            error_message=""
+            continue
         fi
+
+        print_centered_text "${C_GREEN}r: Rejouer / Autre niveau${C_DEFAULT} | ${C_YELLOW}m: Menu${C_DEFAULT} | ${C_BLUE}h: Home${C_DEFAULT}"
         print_separator_line "═" "$BOX_BL" "$BOX_BR"
 
         read -p "Votre choix : " choix_fin
